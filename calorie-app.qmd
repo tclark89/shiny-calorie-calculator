@@ -1,0 +1,49 @@
+---
+title: "Calorie and Macronutrient Calculator"
+author: "Tyler Clark"
+format:
+  html:
+    page-layout: custom
+server: shiny
+---
+
+```{r}
+#| label: sidebar-input
+#| panel: sidebar
+
+numericInput("age", "Age:", min = 1, max = 100, value = 30, step=1)
+numericInput("bodyWeight", "Weight:", min=1, max=500, value=150, step=1)
+
+numericInput("feet", "Feet:", min=0, max=8, value=5, step=1)
+numericInput("inches", "Inches:", min=0, max=11, value=6, step=1)
+```
+
+```{r}
+#| label: results-output
+#| panel: fill
+#| layout-ncol: 2
+
+tableOutput("tableCalories")
+tableOutput("tableMacros")
+```
+
+
+```{r}
+#| label: server
+#| context: server
+
+output$tableCalories <- renderTable({
+  list("Age" = input$age,
+       "Weight" = input$bodyWeight,
+       "Height" = paste0(input$feet, "' ", input$inches, '"')) |> 
+    data.frame()
+})
+
+output$tableMacros <- renderTable({
+  list("Protein" = 0.25,
+         "Fat" = 0.25,
+         "Carbs" = 0.5) |> 
+    data.frame()
+})
+```
+
