@@ -79,15 +79,38 @@ multFac <- reactive(as.numeric(input$multiplier))
 
 ```
 
+```{r}
+#| label: macro-calories
+#| context: server
+
+# Macro         | kJ per gram | kcal per gram | kJ per oz | kcal per oz.
+# Fat	          |       37	  |      8.8	    |   1,049	  |    249
+# Proteins      |	      17	  |      4.1	    |     482	  |    116
+# Carbohydrates |	      17	  |      4.1      |     482   |    116
+
+
+macroTable <- data.frame(
+  "macro" = c("Fat", "Proteins", "Carbohydrates"),
+  "kjPerG" = c(37, 17, 17),
+  "kCalPerG" = c(8.8, 4.1, 4.1),
+  "kJPerOz" = c(1049, 482, 482),
+  "kCalPerOz" = c(249, 116, 116)
+)
+
+
+```
+
 
 ```{r}
 #| label: table-calories
 #| context: server
 
 output$tableCalories <- renderTable({
-  list("MSJ" = round(msj()*multFac(), 0),
-       "RHB" = round(rhb()*multFac(), 0),
-       "KMA" = round(kma()*multFac(), 0))
+  data.frame(
+    "MSJ" = round(msj()*multFac(), 0),
+    "RHB" = round(rhb()*multFac(), 0),
+    "KMA" = round(kma()*multFac(), 0)
+  )
 })
 ```
 
@@ -96,9 +119,11 @@ output$tableCalories <- renderTable({
 #| label: table-macronutrients
 #| context: server
 output$tableMacros <- renderTable({
-  list("Protein" = 0.25,
-         "Fat" = 0.25,
-         "Carbs" = 0.5)
+  data.frame(
+    "Protein" = 0.25,
+    "Fat" = 0.25,
+    "Carbs" = 0.5
+  )
 })
 ```
 
