@@ -63,9 +63,8 @@ kma <- reactive(
 ```
 
 
-
 ```{r}
-#| label: server
+#| label: table-calories
 #| context: server
 
 output$tableCalories <- renderTable({
@@ -73,7 +72,12 @@ output$tableCalories <- renderTable({
        "BMR - RHB" = round(rhb(), 0),
        "BMR - KMA" = round(kma(), 0))
 })
+```
 
+
+```{r}
+#| label: table-macronutrients
+#| context: server
 output$tableMacros <- renderTable({
   list("Protein" = 0.25,
          "Fat" = 0.25,
