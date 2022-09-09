@@ -46,12 +46,19 @@ msj <- reactive(
 )
 
 # Revised Harris-Benedict Equation:
-# For men:
-# BMR = 13.397W + 4.799H - 5.677A + 88.362
-# For women:
-# BMR = 9.247W + 3.098H - 4.330A + 447.593
+rhb <- reactive(
+  if(input$sex == "Male"){
+    13.397 * wtKg() + 4.799 * htCm() - 5.677 * input$age + 88.362
+  } else{
+    9.247 * wtKg() + 3.098 * htCm() - 4.330 * input$age + 447.593
+  }
+)
+
+
 # Katch-McArdle Formula:
-# BMR = 370 + 21.6(1 - F)W
+kma <- reactive(
+  370 + 21.6 * (1-0.2) * wtKg()
+)
 
 ```
 
@@ -62,18 +69,15 @@ msj <- reactive(
 #| context: server
 
 output$tableCalories <- renderTable({
-  list("Age" = input$age,
-       "Weight" = input$bodyWeight,
-       "Height" = paste0(input$feet, "' ", input$inches, '"'),
-       "BMR" = msj()) |> 
-    data.frame()
+  list("BMR - MSJ" = round(msj(), 0),
+       "BMR - RHB" = round(rhb(), 0),
+       "BMR - KMA" = round(kma(), 0))
 })
 
 output$tableMacros <- renderTable({
   list("Protein" = 0.25,
          "Fat" = 0.25,
-         "Carbs" = 0.5) |> 
-    data.frame()
+         "Carbs" = 0.5)
 })
 ```
 
