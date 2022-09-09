@@ -24,9 +24,9 @@ selectInput("multiplier", "Activity Level:",
               "Sedentary: little to no exercise"=1.2,
               "Light: exercise 1-3 times per week"=1.375,
               "Moderate: exercise 4-5 times/week"=1.465, 
-              "Active: daily exercise or intense exercise 3-4 times per week"=1.549,
-              "Very Active: intense exercise 6-7 times per week"=1.725, 
-              "Extra Active: very intense exercise daily, or physical job"=1.899))
+              "Active: daily exercise or intense exercise 3-4 times per week"=1.55,
+              "Very Active: intense exercise 6-7 times per week"=1.726, 
+              "Extra Active: very intense exercise daily, or physical job"=1.90))
 
 # Exercise: 15-30 minutes of elevated heart rate activity.
 # Intense exercise: 45-120 minutes of elevated heart rate activity.
@@ -74,6 +74,9 @@ kma <- reactive(
   370 + 21.6 * (1-0.2) * wtKg()
 )
 
+# Activity Multiplier
+multFac <- reactive(as.numeric(input$multiplier))
+
 ```
 
 
@@ -82,10 +85,9 @@ kma <- reactive(
 #| context: server
 
 output$tableCalories <- renderTable({
-  list("MSJ" = round(msj(), 0),
-       "RHB" = round(rhb(), 0),
-       "KMA" = round(kma(), 0),
-       "Multiplier" = input$multiplier)
+  list("MSJ" = round(msj()*multFac(), 0),
+       "RHB" = round(rhb()*multFac(), 0),
+       "KMA" = round(kma()*multFac(), 0))
 })
 ```
 
