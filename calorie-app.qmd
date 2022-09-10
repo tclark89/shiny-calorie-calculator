@@ -14,6 +14,8 @@ library(kableExtra)
 ```
 
 
+## Calorie Calculations
+
 ```{r}
 #| label: sidebar-input
 #| panel: sidebar
@@ -36,6 +38,26 @@ selectInput("multiplier", "Activity Level:",
               "Very Active: intense exercise 6-7 times per week"=1.726, 
               "Extra Active: very intense exercise daily, or physical job"=1.90))
 
+# Exercise: 15-30 minutes of elevated heart rate activity.
+# Intense exercise: 45-120 minutes of elevated heart rate activity.
+# Very intense exercise: 2+ hours of elevated heart rate activity.
+
+```
+
+```{r}
+#| label: calories-output
+#| panel: fill
+
+tableOutput("tableCalories")
+
+```
+
+## Macronutrient Calculations
+
+```{r}
+#| label: sidebar-input-2
+#| panel: sidebar
+
 numericInput("carbs", "Carbs:", min=0, max=1, value=0.5, step=0.05)
 numericInput("protein", "Protein:", min=0, max=1, value=0.25, step=0.05)
 numericInput("fat", "Fat:", min=0, max=1, value=0.25, step=0.05)
@@ -46,11 +68,11 @@ numericInput("fat", "Fat:", min=0, max=1, value=0.25, step=0.05)
 
 ```
 
-```{r}
-#| label: results-output
-#| panel: fill
 
-tableOutput("tableCalories")
+
+```{r}
+#| label: macros-output
+#| panel: fill
 tableOutput("tableMacros")
 ```
 
@@ -106,7 +128,12 @@ macroTable <- data.frame(
   "kCalPerG" = c(8.8, 4.1, 4.1),
   "kJPerOz" = c(1049, 482, 482),
   "kCalPerOz" = c(249, 116, 116),
-  "ratios" = c(input$fat, input$protein, input$carbs)
+  "ratios" = c(input$fat, input$protein, input$carbs),
+  "grams" = c(
+    round(msj()*multFac() / 8.8 *input$fat, 0),
+    round(msj()*multFac() / 4.1 *input$protein, 0),
+    round(msj()*multFac() / 4.1 *input$carbs, 0)
+  )
 ) |> reactive()
 
 
@@ -128,6 +155,7 @@ output$tableCalories <- renderText({
     "KMA" = round(kma()*multFac(), 0)
   ) |> 
     kbl(digits=0,
+        align="c",
         caption="Estimated Calorie Requirements") |> 
     kable_styling(bootstrap_options = c("hover", "responsive"))
 })
@@ -139,7 +167,7 @@ output$tableCalories <- renderText({
 #| context: server
 output$tableMacros <- renderText({
   macroTable() |> 
-    kbl() |> 
+    kbl(align="c") |> 
     kable_styling(bootstrap_options = c("hover", "responsive"))
 })
 ```
