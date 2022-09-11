@@ -127,15 +127,23 @@ macroTable <- data.frame(
   "kjPerG" = c(37, 17, 17),
   "kCalPerG" = c(8.8, 4.1, 4.1),
   "kJPerOz" = c(1049, 482, 482),
-  "kCalPerOz" = c(249, 116, 116),
-  "ratios" = c(input$fat, input$protein, input$carbs),
-  "grams" = c(
-    round(msj()*multFac() / 8.8 *input$fat, 0),
-    round(msj()*multFac() / 4.1 *input$protein, 0),
-    round(msj()*multFac() / 4.1 *input$carbs, 0)
+  "kCalPerOz" = c(249, 116, 116)
   )
-) |> reactive()
 
+ratios <- data.frame(
+  "ratios" = c("Fat" = input$fat, 
+               "Protein" = input$protein, 
+               "Carbs" = input$carbs)) |> 
+  reactive()
+
+
+grams <- data.frame(
+  "msj" = msj()*multFac() / macroTable$kCalPerG * ratios()[,"ratios"],
+  "rhb" = rhb()*multFac() / macroTable$kCalPerG * ratios()[,"ratios"],
+  "kma" = kma()*multFac() / macroTable$kCalPerG * ratios()[,"ratios"]
+) |> 
+  round(0) |> 
+  reactive()
 
 
 ```
@@ -166,7 +174,9 @@ output$tableCalories <- renderText({
 #| label: table-macronutrients
 #| context: server
 output$tableMacros <- renderText({
-  macroTable() |> 
+   cbind(
+         ratios(),
+         grams()) |> 
     kbl(align="c") |> 
     kable_styling(bootstrap_options = c("hover", "responsive"))
 })
