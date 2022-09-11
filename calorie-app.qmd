@@ -174,8 +174,7 @@ output$tableCalories <- renderText({
 #| label: table-macronutrients
 #| context: server
 output$tableMacros <- renderText({
-   cbind(
-         ratios(),
+   cbind(ratios(),
          grams()) |> 
     kbl(align="c") |> 
     kable_styling(bootstrap_options = c("hover", "responsive"))
